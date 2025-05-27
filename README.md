@@ -144,20 +144,20 @@ See the **FAQ** at the end of the README for required hardware.
 
 ```sh
 [MAIN]
-is_local = True # Whenever you are running locally or with remote provider.
+is_local = True # Whether you are running locally or with remote provider.
 provider_name = ollama # or lm-studio, openai, etc..
 provider_model = deepseek-r1:14b # choose a model that fit your hardware
 provider_server_address = 127.0.0.1:11434
 agent_name = Jarvis # name of your AI
-recover_last_session = True # whenever to recover the previous session
-save_session = True # whenever to remember the current session
+recover_last_session = True # Whether to recover the previous session
+save_session = True # Whether to remember the current session
 speak = True # text to speech
 listen = False # Speech to text, only for CLI
 work_dir =  /Users/mlg/Documents/workspace # The workspace for AgenticSeek.
-jarvis_personality = False # Whenever to use a more "Jarvis" like personality (experimental)
+jarvis_personality = False # Whether to use a more "Jarvis" like personality (experimental)
 languages = en zh # The list of languages, Text to speech will default to the first language on the list
 [BROWSER]
-headless_browser = True # Whenever to use headless browser, recommanded only if you use web interface.
+headless_browser = True # Whether to use headless browser, recommanded only if you use web interface.
 stealth_mode = True # Use undetected selenium to reduce browser detection
 ```
 
