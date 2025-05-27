@@ -254,6 +254,12 @@ Start the backend.
 ```sh
 python3 api.py
 ```
+Start the frontend.
+```sh
+cd frontend/agentic-seek-front
+npm i
+npm run start
+```
 
 Go to `http://localhost:3000/` and you should see the web interface.
 
