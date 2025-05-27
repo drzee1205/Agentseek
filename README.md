@@ -38,11 +38,72 @@ Disclaimer: This demo, including all the files that appear (e.g: CV_candidates.z
 
 ## Installation
 
-Make sure you have chrome driver, docker and python3.10 installed.
+### Prerequisites
 
-We highly advice you use exactly python3.10 for the setup. Dependencies error might happen otherwise.
+#### System Requirements
+- Python 3.10
+- Docker and Docker Compose
+- Google Chrome (latest version)
+- ChromeDriver (matching your Chrome version)
+- Just (command runner)
 
-For issues related to chrome driver, see the **Chromedriver** section.
+#### OS-Specific Requirements
+
+**macOS:**
+- Homebrew (required for installing just and other dependencies)
+  ```sh
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+  ```
+- Install just:
+  ```sh
+  brew install just
+  ```
+- Install ChromeDriver:
+  ```sh
+  # Get Chrome version
+  CHROME_VERSION=$(/Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version | cut -d ' ' -f3 | cut -d '.' -f1)
+  
+  # Install matching ChromeDriver
+  brew install --cask chromedriver
+  # If version mismatch occurs, download manually from:
+  # https://googlechromelabs.github.io/chrome-for-testing/
+  ```
+
+**Linux:**
+- Install just:
+  ```sh
+  curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash
+  ```
+- Install ChromeDriver:
+  ```sh
+  # Get Chrome version
+  CHROME_VERSION=$(google-chrome --version | cut -d ' ' -f3 | cut -d '.' -f1)
+  
+  # Install matching ChromeDriver
+  sudo apt install -y chromium-chromedriver  # For Debian/Ubuntu
+  # or
+  sudo dnf install -y chromium-chromedriver  # For Fedora
+  
+  # If version mismatch occurs, download manually from:
+  # https://googlechromelabs.github.io/chrome-for-testing/
+  ```
+
+**Windows:**
+- Install just:
+  ```sh
+  scoop install just
+  # or
+  winget install taozhiyu.just
+  ```
+- Install ChromeDriver:
+  ```sh
+  # Get Chrome version from chrome://version in Chrome browser
+  # Download matching ChromeDriver from:
+  # https://googlechromelabs.github.io/chrome-for-testing/
+  # Add ChromeDriver to your PATH
+  ```
+
+> ⚠️ **Important**: ChromeDriver version must match your Chrome browser version. If you encounter version mismatch errors, download the correct version from [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/).
 
 ### 1️⃣ **Clone the repository and setup**
 
@@ -52,73 +113,66 @@ cd agenticSeek
 mv .env.example .env
 ```
 
-### 2️ **Create a virtual env**
+### 2️⃣ **Check system requirements**
 
 ```sh
-python3 -m venv agentic_seek_env
-source agentic_seek_env/bin/activate
-# On Windows: agentic_seek_env\Scripts\activate
+just check
 ```
 
-### 3️⃣ **Install package**
+This will verify that all prerequisites are installed and properly configured.
 
-Ensure Python, Docker and docker compose, and Google chrome are installed.
-
-We recommand Python 3.10.0.
-
-**Automatic Installation (Recommanded):**
-
-For Linux/Macos:
-```sh
-./install.sh
-```
-
-For windows:
+### 3️⃣ **Install dependencies**
 
 ```sh
-./install.bat
+just install
 ```
 
-**Manually:**
+This will automatically detect your operating system and install all required dependencies.
 
-**Note: For any OS, ensure the ChromeDriver you install matches your installed Chrome version. Run `google-chrome --version`. See known issues if you have chrome >135**
+### 4️⃣ **Setup virtual environment**
+
+```sh
+just setup-venv
+```
+
+### 5️⃣ **Start services**
+
+```sh
+just start
+```
+
+### Manual Installation (Alternative)
+
+If you prefer to install dependencies manually, follow these steps:
+
+**Note: For any OS, ensure the ChromeDriver you install matches your installed Chrome version. Run `google-chrome --version`**
 
 - *Linux*: 
+  ```sh
+  sudo apt update
+  sudo apt install -y alsa-utils portaudio19-dev python3-pyaudio libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1
+  sudo apt install -y chromium-chromedriver
+  pip3 install -r requirements.txt
+  ```
 
-Update Package List: `sudo apt update`
-
-Install Dependencies: `sudo apt install -y alsa-utils portaudio19-dev python3-pyaudio libgtk-3-dev libnotify-dev libgconf-2-4 libnss3 libxss1`
-
-Install ChromeDriver matching your Chrome browser version:
-`sudo apt install -y chromium-chromedriver`
-
-Install requirements: `pip3 install -r requirements.txt`
-
-- *Macos*:
-
-Update brew : `brew update`
-
-Install chromedriver : `brew install --cask chromedriver`
-
-Install portaudio: `brew install portaudio`
-
-Upgrade pip : `python3 -m pip install --upgrade pip`
-
-Upgrade wheel : : `pip3 install --upgrade setuptools wheel`
-
-Install requirements: `pip3 install -r requirements.txt`
+- *macOS*:
+  ```sh
+  brew update
+  brew install python@3.10 wget portaudio
+  brew install --cask chromedriver
+  python3.10 -m pip install --upgrade pip setuptools wheel
+  pip3 install -r requirements.txt
+  ```
 
 - *Windows*:
-
-Install pyreadline3 `pip install pyreadline3`
-
-Install portaudio manually (e.g., via vcpkg or prebuilt binaries) and then run: `pip install pyaudio`
-
-Download and install chromedriver manually from: https://sites.google.com/chromium.org/driver/getting-started
-
-Place chromedriver in a directory included in your PATH.
-
-Install requirements: `pip3 install -r requirements.txt`
+  ```sh
+  pip install pyreadline3
+  # Install portaudio manually (e.g., via vcpkg or prebuilt binaries)
+  pip install pyaudio
+  # Download and install chromedriver manually from: https://sites.google.com/chromium.org/driver/getting-started
+  # Place chromedriver in a directory included in your PATH
+  pip3 install -r requirements.txt
+  ```
 
 ---
 
@@ -277,7 +331,7 @@ Here are some example usage:
 
 > *Write a Go program to calculate the factorial of a number, save it as factorial.go in your workspace*
 
-> *Search my summer_pictures folder for all JPG files, rename them with today’s date, and save a list of renamed files in photos_list.txt*
+> *Search my summer_pictures folder for all JPG files, rename them with today's date, and save a list of renamed files in photos_list.txt*
 
 > *Search online for popular sci-fi movies from 2024 and pick three to watch tonight. Save the list in movie_night.txt.*
 
@@ -471,30 +525,52 @@ provider_server_address = 127.0.0.1:5000
 
 # Known issues
 
-## Chromedriver Issues
+## ChromeDriver Issues
 
-**Known error #1:** *chromedriver mismatch*
+### Version Mismatch Error
+If you see this error:
+```
+Exception: Failed to initialize browser: Message: session not created: This version of ChromeDriver only supports Chrome version X
+Current browser version is Y
+```
 
-`Exception: Failed to initialize browser: Message: session not created: This version of ChromeDriver only supports Chrome version 113
-Current browser version is 134.0.6998.89 with binary path`
+Follow these steps to fix:
 
-This happen if there is a mismatch between your browser and chromedriver version.
+1. Check your Chrome version:
+   ```sh
+   # macOS
+   /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --version
+   
+   # Linux
+   google-chrome --version
+   
+   # Windows
+   # Visit chrome://version in Chrome browser
+   ```
 
-You need to navigate to download the latest version:
+2. Download the matching ChromeDriver:
+   - Visit [Chrome for Testing](https://googlechromelabs.github.io/chrome-for-testing/)
+   - Download the version matching your Chrome version
+   - Extract and install:
+     ```sh
+     # macOS/Linux
+     mv chromedriver /usr/local/bin/  # or another directory in your PATH
+     
+     # Windows
+     # Add the chromedriver.exe location to your PATH
+     ```
 
-https://developer.chrome.com/docs/chromedriver/downloads
+3. Verify installation:
+   ```sh
+   chromedriver --version
+   ```
 
-If you're using Chrome version 115 or newer go to:
+### Common Issues
+- If ChromeDriver is not found in PATH, ensure it's properly installed and the directory is in your PATH
+- For Chrome versions 115+, always use Chrome for Testing downloads
+- If using Homebrew on macOS, you might need to manually download ChromeDriver if the cask version doesn't match your Chrome version
 
-https://googlechromelabs.github.io/chrome-for-testing/
-
-And download the chromedriver version matching your OS.
-
-![alt text](./media/chromedriver_readme.png)
-
-If this section is incomplete please raise an issue.
-
-##  connection adapters Issues
+## connection adapters Issues
 
 ```
 Exception: Provider lm-studio failed: HTTP request failed: No connection adapters were found for '127.0.0.1:11434/v1/chat/completions'
@@ -528,7 +604,7 @@ Maybe you didn't move `.env.example` as `.env` ? You can also export SEARXNG_BAS
 
 **Q: Why Deepseek R1 over other models?**  
 
-Deepseek R1 excels at reasoning and tool use for its size. We think it’s a solid fit for our needs other models work fine, but Deepseek is our primary pick.
+Deepseek R1 excels at reasoning and tool use for its size. We think it's a solid fit for our needs other models work fine, but Deepseek is our primary pick.
 
 **Q: I get an error running `cli.py`. What do I do?**  
 
@@ -540,13 +616,13 @@ Yes with Ollama, lm-studio or server providers, all speech to text, LLM and text
 
 **Q: Why should I use AgenticSeek when I have Manus?**
 
-This started as Side-Project we did out of interest about AI agents. What’s special about it is that we want to use local model and avoid APIs.
+This started as Side-Project we did out of interest about AI agents. What's special about it is that we want to use local model and avoid APIs.
 We draw inspiration from Jarvis and Friday (Iron man movies) to make it "cool" but for functionnality we take more inspiration from Manus, because that's what people want in the first place: a local manus alternative.
 Unlike Manus, AgenticSeek prioritizes independence from external systems, giving you more control, privacy and avoid api cost.
 
 ## Contribute
 
-We’re looking for developers to improve AgenticSeek! Check out open issues or discussion.
+We're looking for developers to improve AgenticSeek! Check out open issues or discussion.
 
 [Contribution guide](./docs/CONTRIBUTING.md)
 
