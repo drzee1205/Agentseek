@@ -23,6 +23,8 @@ services:
       - agentic-seek-net
 
   searxng:
+    security_opt:
+      - "no-new-privileges:true"
     container_name: searxng
     image: docker.io/searxng/searxng:latest
     restart: unless-stopped
