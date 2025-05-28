@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 import './App.css';
-import { colors } from './colors';
+import { BASE_URL, HEALTH_CHECK_INTERVAL, MESSAGE_TYPE_AGENT, MESSAGE_TYPE_USER } from '../helpers/constants.js'
+import { normalizeAnswer } from '../helpers/utilHelper.js'
 
 function App() {
     const [query, setQuery] = useState('');
@@ -21,13 +22,13 @@ function App() {
             checkHealth();
             fetchLatestAnswer();
             fetchScreenshot();
-        }, 3000);
+        }, HEALTH_CHECK_INTERVAL);
         return () => clearInterval(intervalId);
     }, [messages]);
 
     const checkHealth = async () => {
         try {
-            await axios.get('http://127.0.0.1:8000/health');
+            await axios.get(`${BASE_URL}/health`);
             setIsOnline(true);
             console.log('System is online');
         } catch {
@@ -39,7 +40,7 @@ function App() {
     const fetchScreenshot = async () => {
         try {
             const timestamp = new Date().getTime();
-            const res = await axios.get(`http://127.0.0.1:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
+            const res = await axios.get(`${BASE_URL}/screenshots/updated_screen.png?timestamp=${timestamp}`, {
                 responseType: 'blob'
             });
             console.log('Screenshot fetched successfully');
@@ -64,13 +65,7 @@ function App() {
         }
     };
 
-    const normalizeAnswer = (answer) => {
-        return answer
-            .trim()
-            .toLowerCase()
-            .replace(/\s+/g, ' ')
-            .replace(/[.,!?]/g, '')
-    };
+
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -90,7 +85,7 @@ function App() {
 
     const fetchLatestAnswer = async () => {
         try {
-            const res = await axios.get('http://127.0.0.1:8000/latest_answer');
+            const res = await axios.get(`${BASE_URL}/latest_answer`);
             const data = res.data;
 
             updateData(data);
@@ -105,7 +100,7 @@ function App() {
                 setMessages((prev) => [
                     ...prev,
                     {
-                        type: 'agent',
+                        type: MESSAGE_TYPE_AGENT,
                         content: data.answer,
                         reasoning: data.reasoning,
                         agentName: data.agent_name,
@@ -141,7 +136,7 @@ function App() {
         setIsLoading(false);
         setError(null);
         try {
-            const res = await axios.get('http://127.0.0.1:8000/stop');
+            const res = await axios.get(`${BASE_URL}/stop`);
             setStatus("Requesting stop...");
         } catch (err) {
             console.error('Error stopping the agent:', err);
@@ -155,14 +150,14 @@ function App() {
             console.log('Empty query');
             return;
         }
-        setMessages((prev) => [...prev, { type: 'user', content: query }]);
+        setMessages((prev) => [...prev, { type: MESSAGE_TYPE_USER, content: query }]);
         setIsLoading(true);
         setError(null);
 
         try {
             console.log('Sending query:', query);
             setQuery('waiting for response...');
-            const res = await axios.post('http://127.0.0.1:8000/query', {
+            const res = await axios.post(`${BASE_URL}/query`, {
                 query,
                 tts_enabled: false
             });
@@ -209,23 +204,23 @@ function App() {
                                     <div
                                         key={index}
                                         className={`message ${
-                                            msg.type === 'user'
+                                            msg.type === MESSAGE_TYPE_USER
                                                 ? 'user-message'
-                                                : msg.type === 'agent'
+                                                : msg.type === MESSAGE_TYPE_AGENT
                                                 ? 'agent-message'
                                                 : 'error-message'
                                         }`}
                                     >
                                         <div className="message-header">
-                                            {msg.type === 'agent' && (
+                                            {msg.type === MESSAGE_TYPE_AGENT && (
                                                 <span className="agent-name">{msg.agentName}</span>
                                             )}
-                                            {msg.type === 'agent' && msg.reasoning && expandedReasoning.has(index) && (
+                                            {msg.type === MESSAGE_TYPE_AGENT && msg.reasoning && expandedReasoning.has(index) && (
                                                 <div className="reasoning-content">
                                                     <ReactMarkdown>{msg.reasoning}</ReactMarkdown>
                                                 </div>
                                             )}
-                                            {msg.type === 'agent' && (
+                                            {msg.type === MESSAGE_TYPE_AGENT && (
                                                 <button 
                                                     className="reasoning-toggle"
                                                     onClick={() => toggleReasoning(index)}

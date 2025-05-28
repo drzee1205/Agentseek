@@ -1,0 +1,11 @@
+const BASE_URL = 'http://127.0.0.1:8000';
+const HEALTH_CHECK_INTERVAL = 3000;
+const MESSAGE_TYPE_USER = 'user';
+const MESSAGE_TYPE_AGENT = 'agent';
+
+export {
+  BASE_URL,
+  HEALTH_CHECK_INTERVAL,
+  MESSAGE_TYPE_AGENT,
+  MESSAGE_TYPE_USER,
+};
