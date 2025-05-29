@@ -42,7 +42,6 @@ api.add_middleware(
 
 if not os.path.exists(".screenshots"):
     os.makedirs(".screenshots")
-api.mount("/screenshots", StaticFiles(directory=".screenshots"), name="screenshots")
 
 def initialize_system():
     stealth_mode = config.getboolean('BROWSER', 'stealth_mode')
@@ -106,7 +105,7 @@ interaction = initialize_system()
 is_generating = False
 query_resp_history = []
 
-@api.get("/screenshot")
+@api.get("/screenshots/updated_screen.png")
 async def get_screenshot():
     logger.info("Screenshot endpoint called")
     screenshot_path = ".screenshots/updated_screen.png"
@@ -138,7 +137,16 @@ async def stop():
 async def get_latest_answer():
     global query_resp_history
     if interaction.current_agent is None:
-        return JSONResponse(status_code=404, content={"error": "No agent available"})
+        return JSONResponse(status_code=200, content={
+            "done": "false",
+            "answer": "",
+            "reasoning": "",
+            "agent_name": "None",
+            "success": "false",
+            "blocks": {},
+            "status": "No agent available",
+            "uid": str(uuid.uuid4())
+        })
     uid = str(uuid.uuid4())
     if not any(q["answer"] == interaction.current_agent.last_answer for q in query_resp_history):
         query_resp = {
@@ -157,7 +165,16 @@ async def get_latest_answer():
         return JSONResponse(status_code=200, content=query_resp)
     if query_resp_history:
         return JSONResponse(status_code=200, content=query_resp_history[-1])
-    return JSONResponse(status_code=404, content={"error": "No answer available"})
+    return JSONResponse(status_code=200, content={
+        "done": "false",
+        "answer": "",
+        "reasoning": "",
+        "agent_name": "None",
+        "success": "false",
+        "blocks": {},
+        "status": "No answer available",
+        "uid": str(uuid.uuid4())
+    })
 
 async def think_wrapper(interaction, query):
     try:
@@ -240,7 +257,10 @@ async def process_query(request: QueryRequest):
         return JSONResponse(status_code=200, content=query_resp.jsonify())
     except Exception as e:
         logger.error(f"An error occurred: {str(e)}")
-        sys.exit(1)
+        is_generating = False
+        query_resp.answer = "Error: Unable to process request"
+        query_resp.reasoning = f"Error details: {str(e)}"
+        return JSONResponse(status_code=500, content=query_resp.jsonify())
     finally:
         logger.info("Processing finished")
         if config.getboolean('MAIN', 'save_session'):
