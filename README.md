@@ -1,5 +1,7 @@
 # AgenticSeek: Private, Local Manus Alternative.
 
+#Silly little comment I added to make a change so GIT could pick it up
+
 <p align="center">
 <img align="center" src="./media/agentic_seek_logo.png" width="300" height="300" alt="Agentic Seek Logo">
 <p>
