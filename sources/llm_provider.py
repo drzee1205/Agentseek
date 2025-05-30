@@ -333,7 +333,7 @@ class Provider:
             raise Exception("ModelScope (API) is not available for local use. Change config.ini")
         try:
             response = client.chat.completions.create(
-                model="Qwen/Qwen3-235B-A22B",
+                model=self.model,
                 messages=history,
                 stream=True,
                 extra_body=extra_body
