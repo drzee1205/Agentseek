@@ -345,7 +345,6 @@ class Provider:
                     thought += answer_chunk
             if verbose:
                 print(thought)
-            print(thought)
             return thought
         except Exception as e:
             raise Exception(f"ModelScope API error: {str(e)}") from e
