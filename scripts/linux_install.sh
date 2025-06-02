@@ -1,5 +1,49 @@
 #!/bin/bash
 
+install_chromedriver() {
+    # Detect Chrome version
+    if command -v google-chrome >/dev/null 2>&1; then
+        CHROME_VERSION=$(google-chrome --version | awk '{print $3}')
+    elif command -v google-chrome-stable >/dev/null 2>&1; then
+        CHROME_VERSION=$(google-chrome-stable --version | awk '{print $3}')
+    else
+        echo "❌ Google Chrome is not installed or not in PATH."
+        return 1
+    fi
+
+    echo "🔍 Detected Chrome version: $CHROME_VERSION"
+
+    # Construct download URL
+    DRIVER_NAME="chromedriver-linux64"
+    ZIP_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/linux64/${DRIVER_NAME}.zip"
+
+    echo "🌐 Downloading ChromeDriver from: $ZIP_URL"
+
+    # Remove any older downloads
+    rm -rf /tmp/"${DRIVER_NAME}.zip" /tmp/"${DRIVER_NAME}"
+
+    # Download
+    curl -fLo "${DRIVER_NAME}.zip" "$ZIP_URL" || {
+        echo "❌ Failed to download ChromeDriver for version $CHROME_VERSION"
+        return 1
+    }
+
+    echo "📦 Unzipping..."
+    unzip -q /tmp/"${DRIVER_NAME}.zip" -d /tmp
+
+    echo "🚀 Installing to /usr/local/bin..."
+    sudo mv /tmp/"${DRIVER_NAME}/chromedriver" /usr/local/bin/chromedriver
+    sudo chmod +x /usr/local/bin/chromedriver
+
+    # Clean up
+    rm -rf /tmp/"${DRIVER_NAME}.zip" /tmp/"${DRIVER_NAME}"
+
+    # Verify
+    echo "✅ Installed ChromeDriver version:"
+    chromedriver --version
+    return 0
+}
+
 echo "Starting installation for Linux..."
 
 set -e
@@ -32,6 +76,12 @@ sudo apt-get install -y \
     libgconf-2-4 \
     libnss3 \
     libxss1 || { echo "Failed to install packages"; exit 1; }
+
+# Install ChromeDriver matching Chrome browser version
+install_chromedriver
+if [[ $? -ne 0 ]]; then
+    echo "⚠️ Need to install ChromeDriver manually..."
+fi
 
 # Upgrade pip for Python 3.10
 python3.10 -m pip install --upgrade pip || { echo "Failed to upgrade pip"; exit 1; }

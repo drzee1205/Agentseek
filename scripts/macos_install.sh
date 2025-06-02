@@ -1,5 +1,57 @@
 #!/bin/bash
 
+install_chromedriver() {
+    # Detect Chrome version
+    if [[ -e "/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" ]]; then
+        CHROME_VERSION=$("/Applications/Google Chrome.app/Contents/MacOS/Google Chrome" --version | awk '{print $3}')
+    else
+        echo "❌ Google Chrome is not installed in the default location."
+        return 1
+    fi
+
+    echo "🔍 Detected Chrome version: $CHROME_VERSION"
+
+    # Detect architecture
+    ARCH=$(uname -m)
+    if [[ "$ARCH" == "arm64" ]]; then
+        PLATFORM="mac-arm64"
+    elif [[ "$ARCH" == "x86_64" ]]; then
+        PLATFORM="mac-x64"
+    else
+        echo "❌ Unsupported architecture: $ARCH"
+        return 1
+    fi
+
+    DRIVER_NAME="chromedriver-${PLATFORM}"
+    ZIP_URL="https://storage.googleapis.com/chrome-for-testing-public/${CHROME_VERSION}/${PLATFORM}/${DRIVER_NAME}.zip"
+
+    echo "🌐 Downloading ChromeDriver from: $ZIP_URL"
+
+    # Remove any older downloads
+    rm -rf /tmp/"${DRIVER_NAME}.zip" /tmp/"${DRIVER_NAME}"
+
+    # Download
+    curl -fLo /tmp/"${DRIVER_NAME}.zip" "$ZIP_URL" || {
+        echo "❌ Failed to download ChromeDriver for version $CHROME_VERSION"
+        return 1
+    }
+
+    echo "📦 Unzipping..."
+    unzip -q /tmp/"${DRIVER_NAME}.zip" -d /tmp
+
+    echo "🚀 Installing to /usr/local/bin..."
+    sudo mv /tmp/"${DRIVER_NAME}/chromedriver" /usr/local/bin/chromedriver
+    sudo chmod +x /usr/local/bin/chromedriver
+
+    # Clean up
+    rm -rf /tmp/"${DRIVER_NAME}.zip" /tmp/"${DRIVER_NAME}"
+
+    # Verify
+    echo "✅ Installed ChromeDriver version:"
+    chromedriver --version
+    return 0
+}
+
 echo "Starting installation for macOS..."
 
 set -e
@@ -26,8 +78,17 @@ fi
 brew update
 # make sure wget installed
 brew install wget
-# Install chromedriver using Homebrew
-brew install --cask chromedriver
+
+# Install ChromeDriver matching Chrome browser version
+install_chromedriver
+if [[ $? -ne 0 ]]; then
+    echo "⚠️ Falling back to Homebrew installation of latest ChromeDriver..."
+    # Install chromedriver using Homebrew
+    brew install --cask chromedriver
+    echo "✅ Installed latest ChromeDriver via Homebrew:"
+    chromedriver --version
+fi
+
 # Install portaudio for pyAudio using Homebrew
 brew install portaudio
 

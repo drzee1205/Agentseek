@@ -19,6 +19,7 @@ agentic_seek_env/*
 .env
 */.env
 dsk/
+.idea
 
 ### react ###
 .DS_*
