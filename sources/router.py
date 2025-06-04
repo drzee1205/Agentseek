@@ -14,7 +14,7 @@ from sources.agents.planner_agent import FileAgent
 from sources.agents.browser_agent import BrowserAgent
 from sources.language import LanguageUtility
 from sources.utility import pretty_print, animate_thinking, timer_decorator
-from sources.logger import Logger
+from sources.logger import StructuredLogger
 
 class AgentRouter:
     """
@@ -22,7 +22,7 @@ class AgentRouter:
     """
     def __init__(self, agents: list, supported_language: List[str] = ["en", "fr", "zh"]):
         self.agents = agents
-        self.logger = Logger("router.log")
+        self.logger = StructuredLogger("AgentRouter")
         self.lang_analysis = LanguageUtility(supported_language=supported_language)
         self.pipelines = self.load_pipelines()
         self.talk_classifier = self.load_llm_router()

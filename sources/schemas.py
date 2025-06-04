@@ -75,3 +75,10 @@ class executorResult:
         pretty_print('▂'*64, color="status")
         pretty_print(self.feedback, color="success" if self.success else "failure")
         pretty_print('▂'*64, color="status")
+
+
+class LLMTaskRequest(BaseModel):
+    """
+    Request model for initiating an LLM task, like content analysis.
+    """
+    content: str
