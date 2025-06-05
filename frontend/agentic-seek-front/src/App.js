@@ -1,8 +1,10 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import ReactMarkdown from 'react-markdown';
 import axios from 'axios';
 import './App.css';
-import { colors } from './colors';
+// import { colors } from './colors';
+
+const BACKEND_URL = process.env.REACT_APP_BACKEND_URL || 'http://127.0.0.1:8000';
 
 function App() {
     const [query, setQuery] = useState('');
@@ -16,18 +18,9 @@ function App() {
     const [expandedReasoning, setExpandedReasoning] = useState(new Set());
     const messagesEndRef = useRef(null);
 
-    useEffect(() => {
-        const intervalId = setInterval(() => {
-            checkHealth();
-            fetchLatestAnswer();
-            fetchScreenshot();
-        }, 3000);
-        return () => clearInterval(intervalId);
-    }, [messages]);
-
     const checkHealth = async () => {
         try {
-            await axios.get('http://127.0.0.1:8000/health');
+            await axios.get(`${BACKEND_URL}/health`);
             setIsOnline(true);
             console.log('System is online');
         } catch {
@@ -39,7 +32,7 @@ function App() {
     const fetchScreenshot = async () => {
         try {
             const timestamp = new Date().getTime();
-            const res = await axios.get(`http://127.0.0.1:8000/screenshots/updated_screen.png?timestamp=${timestamp}`, {
+            const res = await axios.get(`${BACKEND_URL}/screenshots/updated_screen.png?timestamp=${timestamp}`, {
                 responseType: 'blob'
             });
             console.log('Screenshot fetched successfully');
@@ -88,9 +81,9 @@ function App() {
         });
     };
 
-    const fetchLatestAnswer = async () => {
+    const fetchLatestAnswer = useCallback(async () => {
         try {
-            const res = await axios.get('http://127.0.0.1:8000/latest_answer');
+            const res = await axios.get(`${BACKEND_URL}/latest_answer`);
             const data = res.data;
 
             updateData(data);
@@ -121,7 +114,16 @@ function App() {
         } catch (error) {
             console.error('Error fetching latest answer:', error);
         }
-    };
+    }, [messages]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            checkHealth();
+            fetchLatestAnswer();
+            fetchScreenshot();
+        }, 3000);
+        return () => clearInterval(intervalId);
+    }, [messages, fetchLatestAnswer]);
 
     const updateData = (data) => {
         setResponseData((prev) => ({
@@ -141,7 +143,7 @@ function App() {
         setIsLoading(false);
         setError(null);
         try {
-            const res = await axios.get('http://127.0.0.1:8000/stop');
+            await axios.get(`${BACKEND_URL}/stop`);
             setStatus("Requesting stop...");
         } catch (err) {
             console.error('Error stopping the agent:', err);
@@ -162,7 +164,7 @@ function App() {
         try {
             console.log('Sending query:', query);
             setQuery('waiting for response...');
-            const res = await axios.post('http://127.0.0.1:8000/query', {
+            const res = await axios.post(`${BACKEND_URL}/query`, {
                 query,
                 tts_enabled: false
             });
@@ -195,7 +197,7 @@ function App() {
     return (
         <div className="app">
             <header className="header">
-                <h1>AgenticSeek</h1>
+                <h1>Agentic IA</h1>
             </header>
             <main className="main">
                 <div className="app-sections">
@@ -208,13 +210,12 @@ function App() {
                                 messages.map((msg, index) => (
                                     <div
                                         key={index}
-                                        className={`message ${
-                                            msg.type === 'user'
-                                                ? 'user-message'
-                                                : msg.type === 'agent'
+                                        className={`message ${msg.type === 'user'
+                                            ? 'user-message'
+                                            : msg.type === 'agent'
                                                 ? 'agent-message'
                                                 : 'error-message'
-                                        }`}
+                                            }`}
                                     >
                                         <div className="message-header">
                                             {msg.type === 'agent' && (
@@ -226,7 +227,7 @@ function App() {
                                                 </div>
                                             )}
                                             {msg.type === 'agent' && (
-                                                <button 
+                                                <button
                                                     className="reasoning-toggle"
                                                     onClick={() => toggleReasoning(index)}
                                                     title={expandedReasoning.has(index) ? "Hide reasoning" : "Show reasoning"}
