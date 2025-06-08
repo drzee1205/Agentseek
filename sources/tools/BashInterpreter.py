@@ -52,6 +52,7 @@ class BashInterpreter(Tools):
                 process = subprocess.Popen(
                     command,
                     shell=True,
+                    executable="/usr/bin/bash",
                     stdout=subprocess.PIPE,
                     stderr=subprocess.STDOUT,
                     universal_newlines=True
