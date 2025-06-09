@@ -232,7 +232,7 @@ Go to `http://localhost:3000/` and you should see the web interface.
 To run with CLI interface you would have to install package on host:
 
 ```sh
-./install.sh
+./install.sh # MacOS
 ./install.bat # windows
 ```
 
