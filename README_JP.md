@@ -262,7 +262,7 @@ start ./start_services.cmd # Window
 **オプション1：** CLIインターフェースで実行します。
 
 ```sh
-python3 cli.py
+uv run cli.py
 ```
 
 CLIモードでは、config.iniで`headless_browser`をFalseに設定することをお勧めします。
@@ -272,7 +272,7 @@ CLIモードでは、config.iniで`headless_browser`をFalseに設定するこ�
 バックエンドを開始します。
 
 ```sh
-python3 api.py
+uv run api.py
 ```
 
 `http://localhost:3000/`にアクセスすると、Webインターフェースが表示されます。
@@ -281,7 +281,7 @@ python3 api.py
 
 ## 使用方法
 
-`./start_services.sh`でサービスが起動していることを確認し、CLIモードの場合は`python3 cli.py`で、Webインターフェースの場合は`python3 api.py`を実行してから`localhost:3000`にアクセスしてAgenticSeekを実行します。
+`./start_services.sh`でサービスが起動していることを確認し、CLIモードの場合は`uv run cli.py`で、Webインターフェースの場合は`uv run api.py`を実行してから`localhost:3000`にアクセスしてAgenticSeekを実行します。
 
 設定で`listen = True`を設定することで、音声認識を使用することもできます。CLIモードのみ。
 

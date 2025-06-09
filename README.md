@@ -235,11 +235,6 @@ Next step: [Start services and run AgenticSeek](#Start-services-and-Run)
 
 ## Start services and Run
 
-Activate your python env if needed.
-```sh
-source .venv/bin/activate
-```
-
 Start required services. This will start all services from the docker-compose.yml, including:
     - searxng
     - redis (required by searxng)
@@ -253,7 +248,7 @@ start ./start_services.cmd # Window
 **Options 1:** Run with the CLI interface.
 
 ```sh
-python3 cli.py
+uv run cli.py
 ```
 
 We advice you set `headless_browser` to False in the config.ini for CLI mode.
@@ -263,7 +258,7 @@ We advice you set `headless_browser` to False in the config.ini for CLI mode.
 Start the backend.
 
 ```sh
-python3 api.py
+uv run api.py
 ```
 
 Go to `http://localhost:3000/` and you should see the web interface.
@@ -272,7 +267,7 @@ Go to `http://localhost:3000/` and you should see the web interface.
 
 ## Usage
 
-Make sure the services are up and running with `./start_services.sh` and run the AgenticSeek with `python3 cli.py` for CLI mode or `python3 api.py` then go to `localhost:3000` for web interface.
+Make sure the services are up and running with `./start_services.sh` and run the AgenticSeek with `uv run cli.py` for CLI mode or `uv run api.py` then go to `localhost:3000` for web interface.
 
 You can also use speech to text by setting `listen = True` in the config. Only for CLI mode.
 

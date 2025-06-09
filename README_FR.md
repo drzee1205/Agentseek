@@ -173,11 +173,6 @@ Remarque : Certains fournisseurs (ex : lm-studio) nécessitent `http://` devant 
 
 ### **Démarrer les services & Exécuter**
 
-Activez votre environnement Python si nécessaire.
-```sh
-source .venv/bin/activate
-```
-
 Démarrez les services requis. Cela lancera tous les services définis dans le fichier docker-compose.yml, y compris :
     - searxng
     - redis (nécessaire pour searxng)
@@ -191,7 +186,7 @@ start ./start_services.cmd # Windows
 **Option 1 :** Exécuter avec l'interface CLI.
 
 ```sh
-python3 cli.py
+uv run cli.py
 ```
 
 **Option 2 :** Exécuter avec l'interface Web.
@@ -199,7 +194,7 @@ python3 cli.py
 Démarrez le backend.
 
 ```sh
-python3 api.py
+uv run api.py
 ```
 
 Allez sur `http://localhost:3000/` et vous devriez voir l'interface web.
@@ -229,7 +224,7 @@ Pour quitter, dites simplement `goodbye`.
 
 **Interface:**
 
-Assurez-vous d'avoir bien démarré le backend avec `python3 api.py`.  
+Assurez-vous d'avoir bien démarré le backend avec `uv run api.py`.  
 Allez sur `localhost:3000` où vous verrez une interface web.  
 Tapez simplement votre message et patientez.  
 Si vous n'avez pas d'interface sur `localhost:3000`, c'est que vous n'avez pas démarré les services avec `start_services.sh`.

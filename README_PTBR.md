@@ -202,21 +202,17 @@ export OPENAI_API_KEY="sua_chave_aqui"
      .\start_services.cmd
      ```
 
-3. Ative o ambiente virtual e escolha a interface:
-
-   ```bash
-   source .venv/bin/activate
-   ```
+3. Escolha a interface:
 
    - **CLI**  
      ```bash
-     python3 cli.py
+     uv run cli.py
      ```
      > Dica: defina `headless_browser = False` no `config.ini` para ver o navegador.
 
    - **Web**  
      ```bash
-     python3 api.py
+     uv run api.py
      ```
      Acesse `http://localhost:3000/` no navegador.
 
@@ -226,8 +222,8 @@ export OPENAI_API_KEY="sua_chave_aqui"
 
 Após iniciar os serviços, execute:
 
-- **CLI**: `python3 cli.py`  
-- **Web**: `python3 api.py` e visite `http://localhost:3000/`
+- **CLI**: `uv run cli.py`  
+- **Web**: `uv run api.py` e visite `http://localhost:3000/`
 
 Para usar fala → texto (CLI), ajuste `listen = True` no `config.ini`.  
 Para encerrar, diga ou digite `goodbye`.

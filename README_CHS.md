@@ -203,11 +203,6 @@ provider_server_address = 127.0.0.1:5000
 ## Start services and Run
 (启动服务并运行)
 
-如果需要，请激活你的 Python 环境。
-```sh
-source .venv/bin/activate
-```
-
 启动所需的服务。这将启动 `docker-compose.yml` 中的所有服务，包括：
 - searxng
 - redis（由 redis 提供支持）
@@ -221,7 +216,7 @@ start ./start_services.cmd # Windows
 **选项 1:** 使用 CLI 界面运行。
 
 ```sh
-python3 cli.py
+uv run cli.py
 ```
 
 **选项 2:** 使用 Web 界面运行。
@@ -231,7 +226,7 @@ python3 cli.py
 启动后端服务。
 
 ```sh
-python3 api.py
+uv run api.py
 ```
 
 访问 `http://localhost:3000/`，你应该会看到 Web 界面。
@@ -249,11 +244,11 @@ python3 api.py
 languages = en zh
 更多信息请参阅 Config 部分
 
-确定所有的核心档案都启用了，也就是执行过这条命令 `./start_services.sh` 然后你就可以使用 `python3 cli.py` 来启动 AgenticSeek 了！
+确定所有的核心档案都启用了，也就是执行过这条命令 `./start_services.sh` 然后你就可以使用 `uv run cli.py` 来启动 AgenticSeek 了！
 
 ```sh
 sudo ./start_services.sh
-python3 cli.py
+uv run cli.py
 ```
 
 当你看到执行后显示 `>>> `
