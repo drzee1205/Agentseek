@@ -80,18 +80,30 @@ def install_chromedriver() -> str:
     """
     Install the ChromeDriver if not already installed. Return the path.
     """
+    # Force reinstallation by removing existing chromedriver
+    # This is useful if the version has changed or if there are issues with the current installation.
+    # This will not work if the chromedriver is not in the PATH.
+    
     chromedriver_path = shutil.which("chromedriver")
-    if not chromedriver_path:
+    if chromedriver_path and os.path.exists(chromedriver_path):
         try:
-            print("ChromeDriver not found, attempting to install automatically...")
-            chromedriver_path = chromedriver_autoinstaller.install()
-        except Exception as e:
-            raise FileNotFoundError(
-                "ChromeDriver not found and could not be installed automatically. "
-                "Please install it manually from https://chromedriver.chromium.org/downloads."
-                "and ensure it's in your PATH or specify the path directly."
-                "See know issues in readme if your chrome version is above 115."
-            ) from e
+            os.remove(chromedriver_path)
+            print(f"Removed old chromedriver: {chromedriver_path}")
+        except:
+            pass
+    
+    try:
+        print("Installing ChromeDriver automatically...")
+        chromedriver_path = chromedriver_autoinstaller.install()
+        print(f"ChromeDriver installed at: {chromedriver_path}")
+    except Exception as e:
+        raise FileNotFoundError(
+            "ChromeDriver not found and could not be installed automatically. "
+            "Please install it manually from https://chromedriver.chromium.org/downloads."
+            "and ensure it's in your PATH or specify the path directly."
+            "See know issues in readme if your chrome version is above 115."
+        ) from e
+    
     if not chromedriver_path:
         raise FileNotFoundError("ChromeDriver not found. Please install it or add it to your PATH.")
     return chromedriver_path
