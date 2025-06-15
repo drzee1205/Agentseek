@@ -85,7 +85,7 @@ services:
       - ${WORK_DIR:-.}:/opt/workspace
     command: python3 api.py
     environment:
-      - SEARXNG_URL=${SEARXNG_BASE_URL:-http://searxng:8080}
+      - SEARXNG_BASE_URL=${SEARXNG_BASE_URL:-http://searxng:8080}
       - REDIS_URL=${REDIS_BASE_URL:-redis://redis:6379/0}
       - WORK_DIR=/opt/workspace
       - BACKEND_PORT=${BACKEND_PORT}
