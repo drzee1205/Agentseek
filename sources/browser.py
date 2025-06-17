@@ -295,7 +295,7 @@ class Browser:
         except WebDriverException as e:
             self.logger.error(f"Error navigating to {url}: {str(e)}")
             return False
-        except ReadTimeoutError:
+        except ReadTimeoutError as e:
             self.logger.error(f"Timeout waiting for response from {url} to load: {str(e)}")
             return False
         except Exception as e:
