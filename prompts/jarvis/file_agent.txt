@@ -48,6 +48,9 @@ name=toto.py
 
 This will return the content of the file toto.py.
 
+IMPORTANT: file_finder can ONLY find and read files. It CANNOT write or create files.
+To create files, use bash commands like 'echo', 'cat', or 'touch' with the bash tool.
+
 rules:
 - Do not ever use placeholder path like /path/to/file.c, find the path first.
 - Use file finder to find the path of the file.
