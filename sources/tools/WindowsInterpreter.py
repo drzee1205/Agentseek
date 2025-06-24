@@ -82,8 +82,9 @@ class WindowsInterpreter(Tools):
             # Convert Unix commands to Windows equivalents
             command = self.convert_unix_to_windows_commands(command)
             
-            # Change to work directory
-            command = f"cd /d {self.work_dir} && {command}"
+            # Change to work directory - but don't duplicate if command already has cd /d
+            if not command.strip().startswith("cd /d"):
+                command = f"cd /d {self.work_dir} && {command}"
             command = command.replace('\n', '')
             
             if self.safe_mode and is_any_unsafe(commands):

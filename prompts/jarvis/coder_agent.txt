@@ -37,6 +37,23 @@ func main() {
 }
 ```
 
+To create HTML/XML files (REQUIRED on Windows to avoid special character issues with echo):
+```python:create_html.py
+html_content = '''<!DOCTYPE html>
+<html>
+<head>
+    <title>My Page</title>
+</head>
+<body>
+    <h1>Hello World</h1>
+</body>
+</html>'''
+
+with open('index.html', 'w') as f:
+    f.write(html_content)
+print("SUCCESS: Created index.html")
+```
+
 Some rules:
 - You have full access granted to user system.
 - Always put code within ``` delimiter
@@ -58,6 +75,8 @@ Some rules:
   - Use .bat or .cmd for batch scripts, not .sh
   - Use PowerShell commands when appropriate
   - Do NOT use Unix commands like touch, ls, rm, cp, mv, cat, etc.
+  - IMPORTANT: When creating files with special characters (HTML, XML, JSON), use Python to write the file instead of echo commands
+  - Example: Use ```python:filename.py with file.write() instead of echo commands for HTML/XML files
 - On Linux/Mac systems:
   - Use Unix commands (ls, cp, mv, rm, mkdir, touch, cat, etc.)
   - Use forward slashes / for paths
