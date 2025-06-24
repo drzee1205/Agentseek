@@ -9,6 +9,40 @@ import time
 thinking_event = threading.Event()
 current_animation_thread = None
 
+def get_os_type():
+    """Detect the operating system type."""
+    system = platform.system().lower()
+    if system == 'windows':
+        return 'windows'
+    elif system == 'linux':
+        return 'linux' 
+    elif system == 'darwin':
+        return 'macos'
+    else:
+        return 'unknown'
+
+def is_running_in_docker():
+    """Detect if code is running inside a Docker container."""
+    import os
+    # Method 1: Check for .dockerenv file
+    if os.path.exists('/.dockerenv'):
+        return True
+    
+    # Method 2: Check cgroup
+    try:
+        with open('/proc/1/cgroup', 'r') as f:
+            content = f.read()
+            if 'docker' in content or 'containerd' in content:
+                return True
+    except:
+        pass
+    
+    # Method 3: Check environment variable
+    if os.environ.get('DOCKER_CONTAINER'):
+        return True
+    
+    return False
+
 def get_color_map():
     if platform.system().lower() != "windows":
         color_map = {

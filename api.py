@@ -18,7 +18,7 @@ from sources.llm_provider import Provider
 from sources.interaction import Interaction
 from sources.agents import CasualAgent, CoderAgent, FileAgent, PlannerAgent, BrowserAgent
 from sources.browser import Browser, create_driver
-from sources.utility import pretty_print
+from sources.utility import pretty_print, is_running_in_docker
 from sources.logger import Logger
 from sources.schemas import QueryRequest, QueryResponse
 
@@ -27,20 +27,6 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
-def is_running_in_docker():
-    """Detect if code is running inside a Docker container."""
-    # Method 1: Check for .dockerenv file
-    if os.path.exists('/.dockerenv'):
-        return True
-    
-    # Method 2: Check cgroup
-    try:
-        with open('/proc/1/cgroup', 'r') as f:
-            return 'docker' in f.read()
-    except:
-        pass
-    
-    return False
 
 
 from celery import Celery
@@ -68,6 +54,7 @@ def initialize_system():
     stealth_mode = config.getboolean('BROWSER', 'stealth_mode')
     personality_folder = "jarvis" if config.getboolean('MAIN', 'jarvis_personality') else "base"
     languages = config["MAIN"]["languages"].split(' ')
+    debug_llm = config.getboolean('MAIN', 'debug_llm', fallback=False)
     
     # Force headless mode in Docker containers
     headless = config.getboolean('BROWSER', 'headless_browser')
@@ -105,27 +92,27 @@ def initialize_system():
         CasualAgent(
             name=config["MAIN"]["agent_name"],
             prompt_path=f"prompts/{personality_folder}/casual_agent.txt",
-            provider=provider, verbose=False
+            provider=provider, verbose=debug_llm
         ),
         CoderAgent(
             name="coder",
             prompt_path=f"prompts/{personality_folder}/coder_agent.txt",
-            provider=provider, verbose=False
+            provider=provider, verbose=debug_llm
         ),
         FileAgent(
             name="File Agent",
             prompt_path=f"prompts/{personality_folder}/file_agent.txt",
-            provider=provider, verbose=False
+            provider=provider, verbose=debug_llm
         ),
         BrowserAgent(
             name="Browser",
             prompt_path=f"prompts/{personality_folder}/browser_agent.txt",
-            provider=provider, verbose=False, browser=browser
+            provider=provider, verbose=debug_llm, browser=browser
         ),
         PlannerAgent(
             name="Planner",
             prompt_path=f"prompts/{personality_folder}/planner_agent.txt",
-            provider=provider, verbose=False, browser=browser
+            provider=provider, verbose=debug_llm, browser=browser
         )
     ]
     logger.info("Agents initialized")
