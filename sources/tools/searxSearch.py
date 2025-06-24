@@ -1,11 +1,13 @@
 import requests
 from bs4 import BeautifulSoup
 import os
+import sys
 
 if __name__ == "__main__": # if running as a script for individual testing
     sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
 from sources.tools.tools import Tools
+from sources.utility import is_running_in_docker
 
 class searxSearch(Tools):
     def __init__(self, base_url: str = None):
@@ -16,7 +18,22 @@ class searxSearch(Tools):
         self.tag = "web_search"
         self.name = "searxSearch"
         self.description = "A tool for searching a SearxNG for web search"
-        self.base_url = os.getenv("SEARXNG_BASE_URL")  # Requires a SearxNG base URL
+        
+        # Get base URL from environment or use intelligent default
+        env_url = os.getenv("SEARXNG_BASE_URL")
+        dynamic_url = os.getenv("SEARXNG_DYNAMIC_URL", "").lower() == "true"
+        
+        if env_url:
+            # Only apply dynamic URL conversion if explicitly enabled
+            if dynamic_url and is_running_in_docker() and ('127.0.0.1' in env_url or 'localhost' in env_url):
+                self.base_url = env_url.replace('127.0.0.1', 'searxng').replace('localhost', 'searxng')
+                print(f"Dynamic URL enabled: Using {self.base_url} instead of {env_url} in Docker")
+            else:
+                self.base_url = env_url
+        else:
+            # No env var set, use intelligent default
+            self.base_url = "http://searxng:8080" if is_running_in_docker() else "http://127.0.0.1:8080"
+            
         self.user_agent = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/134.0.0.0 Safari/537.36"
         self.paywall_keywords = [
             "Member-only", "access denied", "restricted content", "404", "this page is not working"
@@ -92,10 +109,28 @@ class searxSearch(Tools):
                     description = article.find('p', class_='content').text.strip() if article.find('p', class_='content') else "No Description"
                     results.append(f"Title:{title}\nSnippet:{description}\nLink:{url}")
             if len(results) == 0:
-                return "No search results, web search failed."
+                # Check for common SearxNG error messages
+                if 'CAPTCHA' in html_content:
+                    return "Search temporarily unavailable: Some search engines are experiencing CAPTCHA challenges. Please try again in a moment - SearxNG will use alternative search engines."
+                elif 'No results found' in html_content:
+                    return f"No results found for query: {query}"
+                else:
+                    return "No search results found. The search engines may be temporarily unavailable."
             return "\n\n".join(results)  # Return results as a single string, separated by newlines
+        except requests.exceptions.ConnectionError as e:
+            # More specific error for connection issues
+            if is_running_in_docker():
+                raise Exception("\nCannot connect to SearxNG. Please check:\n1. Docker services are running (docker ps)\n2. SearxNG container is healthy\n3. Try: docker-compose restart searxng") from e
+            else:
+                raise Exception("\nCannot connect to SearxNG at http://127.0.0.1:8080. Please check:\n1. SearxNG is running (./start_services.sh)\n2. Port 8080 is not blocked") from e
         except requests.exceptions.RequestException as e:
-            raise Exception("\nSearxng search failed. did you run start_services.sh? is docker still running?") from e
+            # Generic request errors
+            if response.status_code == 503:
+                return "Search service temporarily overloaded. SearxNG is switching to alternative search engines. Please try again."
+            elif response.status_code == 429:
+                return "Search rate limit reached. Please wait a moment before searching again."
+            else:
+                raise Exception(f"\nSearch request failed (HTTP {response.status_code}). SearxNG may be experiencing issues.") from e
 
     def execution_failure_check(self, output: str) -> bool:
         """

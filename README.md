@@ -74,7 +74,8 @@ ANTHROPIC_API_KEY='optional'
 
 Update the `.env` file with your own values as needed:
 
-- **SEARXNG_BASE_URL**: Leave unchanged 
+- **SEARXNG_BASE_URL**: Leave unchanged for Docker setup. For non-Docker, use `http://127.0.0.1:8080`
+- **SEARXNG_DYNAMIC_URL**: Set to `"true"` to automatically convert localhost URLs to container names when running in Docker. Useful if you switch between Docker and non-Docker setups.
 - **REDIS_BASE_URL**: Leave unchanged 
 - **WORK_DIR**: Path to your working directory on your local machine. AgenticSeek will be able to read and interact with these files.
 - **OLLAMA_PORT**: Port number for the Ollama service.
