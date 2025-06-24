@@ -30,6 +30,7 @@ class PlannerAgent(Agent):
         }
         self.role = "planification"
         self.type = "planner_agent"
+        self.tasks = []  # Initialize tasks list
         self.memory = Memory(self.load_prompt(prompt_path),
                                 recover_last_session=False, # session recovery in handled by the interaction class
                                 memory_compression=False,
