@@ -22,7 +22,6 @@ async def main():
     stealth_mode = config.getboolean('BROWSER', 'stealth_mode')
     personality_folder = "jarvis" if config.getboolean('MAIN', 'jarvis_personality') else "base"
     languages = config["MAIN"]["languages"].split(' ')
-    debug_llm = config.getboolean('MAIN', 'debug_llm', fallback=False)
 
     provider = Provider(provider_name=config["MAIN"]["provider_name"],
                         model=config["MAIN"]["provider_model"],
@@ -37,19 +36,19 @@ async def main():
     agents = [
         CasualAgent(name=config["MAIN"]["agent_name"],
                     prompt_path=f"prompts/{personality_folder}/casual_agent.txt",
-                    provider=provider, verbose=debug_llm),
+                    provider=provider, verbose=False),
         CoderAgent(name="coder",
                    prompt_path=f"prompts/{personality_folder}/coder_agent.txt",
-                   provider=provider, verbose=debug_llm),
+                   provider=provider, verbose=False),
         FileAgent(name="File Agent",
                   prompt_path=f"prompts/{personality_folder}/file_agent.txt",
-                  provider=provider, verbose=debug_llm),
+                  provider=provider, verbose=False),
         BrowserAgent(name="Browser",
                      prompt_path=f"prompts/{personality_folder}/browser_agent.txt",
-                     provider=provider, verbose=debug_llm, browser=browser),
+                     provider=provider, verbose=False, browser=browser),
         PlannerAgent(name="Planner",
                      prompt_path=f"prompts/{personality_folder}/planner_agent.txt",
-                     provider=provider, verbose=debug_llm, browser=browser),
+                     provider=provider, verbose=False, browser=browser),
         #McpAgent(name="MCP Agent",
         #            prompt_path=f"prompts/{personality_folder}/mcp_agent.txt",
         #            provider=provider, verbose=False), # NOTE under development
