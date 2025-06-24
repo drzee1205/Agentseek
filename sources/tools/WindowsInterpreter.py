@@ -120,7 +120,10 @@ class WindowsInterpreter(Tools):
         """
         Provide feedback based on the output of the Windows interpreter
         """
-        if self.execution_failure_check(output):
+        # Check if the output explicitly indicates a failure
+        if "failed with return code" in output or "failed:" in output or "timed out" in output:
+            feedback = f"[failure] Error in execution:\n{output}"
+        elif self.execution_failure_check(output):
             feedback = f"[failure] Error in execution:\n{output}"
         else:
             feedback = "[success] Execution success, code output:\n" + output
@@ -165,17 +168,25 @@ class WindowsInterpreter(Tools):
             r"syntax is incorrect",
             r"already exists",
             r"could not find",
-            r"system cannot find"
+            r"system cannot find",
+            r"the system cannot find",
+            r"failed with return code",
+            r"timed out"
         ]
         feedback = feedback.lower()
         for pattern in error_patterns:
             if re.search(pattern, feedback):
                 return True
         
-        # Windows specific return code check
+        # Windows specific return code check - any non-zero return code is an error
         if "return code" in feedback:
-            if "return code 1" in feedback or "return code 2" in feedback:
-                return True
+            # Extract the return code number
+            import re as regex
+            match = regex.search(r"return code (\d+)", feedback)
+            if match:
+                code = int(match.group(1))
+                if code != 0:
+                    return True
         return False
 
 if __name__ == "__main__":
