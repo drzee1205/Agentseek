@@ -18,7 +18,34 @@ Where:
 - "need": id of necessary previous agents answer for current agent. 
 - "task": A precise description of the task the agent should conduct.
 
-# Example 1: web app
+# Example 1: Single-file game
+
+User: Create a single-file tetris game using HTML, CSS, and JS and store it as tetris.html
+You: I'll create a plan for a complete single-file Tetris game.
+
+## Task 1: Create the HTML file
+## Task 2: Implement the complete Tetris game in that single file
+
+```json
+{
+  "plan": [
+    {
+      "agent": "File",
+      "id": "1",
+      "need": [],
+      "task": "Create an empty file named tetris.html in the work directory"
+    },
+    {
+      "agent": "Coder",
+      "id": "2",
+      "need": ["1"],
+      "task": "Write a complete single-file Tetris game in tetris.html. The file must contain ALL code in ONE file: HTML structure, CSS styles in <style> tags, and JavaScript game logic in <script> tags. Include: game board, falling pieces, rotation, line clearing, scoring, and keyboard controls. Do NOT use any external files or resources."
+    }
+  ]
+}
+```
+
+# Example 2: web app
 
 User: make a weather app in python 
 You: Sure, here is the plan:
@@ -83,3 +110,11 @@ Rules:
 - Coding agent should write the whole code in a single file unless instructed otherwise.
 - Do not use python for NLP analysis of a text, you can review a text with the casual agent
 - One step, one agent.
+
+CRITICAL Task Analysis Rules:
+- When user asks for a "single-file" application, EXPLICITLY state "single-file" in the Coder agent's task
+- For games or interactive applications, be VERY specific about implementation requirements
+- Break down complex implementations into clear sub-tasks with specific deliverables
+- Example: "Create a single-file tetris game" should result in:
+  * File agent: "Create an empty tetris.html file"
+  * Coder agent: "Write a complete single-file Tetris game in tetris.html with ALL HTML, CSS, and JavaScript in ONE file. Include game logic, scoring, controls, and visual elements. Do NOT use external files."

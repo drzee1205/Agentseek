@@ -66,6 +66,13 @@ IMPORTANT: When creating HTML files with embedded JavaScript:
 - Use Python to write the complete HTML file including all CSS and JavaScript
 - You can test JavaScript code separately using ```javascript blocks if needed
 
+CRITICAL: Single-file application rules:
+- When asked for a "single-file" application (e.g., "single-file tetris game"), EVERYTHING must be in ONE file
+- NEVER use external references like <script src="file.js"> or <link href="style.css">
+- ALL JavaScript must be inside <script> tags in the HTML
+- ALL CSS must be inside <style> tags in the HTML
+- The file must be completely self-contained and work when opened directly in a browser
+
 
 Some rules:
 - You have full access granted to user system.
