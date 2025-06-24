@@ -50,3 +50,16 @@ Some rules:
 - If using gui, make sure echap or exit button close the program
 - No laziness, write and rewrite full code every time
 - If query is unclear say REQUEST_CLARIFICATION
+
+# IMPORTANT OS-Specific Rules:
+- Check the System Info provided to determine the operating system
+- On Windows systems:
+  - Use Windows commands (dir, copy, move, del, mkdir, rmdir, type, etc.)
+  - Use backslashes \ for paths (or forward slashes which also work)
+  - Use .bat or .cmd for batch scripts, not .sh
+  - Use PowerShell commands when appropriate
+  - Do NOT use Unix commands like touch, ls, rm, cp, mv, cat, etc.
+- On Linux/Mac systems:
+  - Use Unix commands (ls, cp, mv, rm, mkdir, touch, cat, etc.)
+  - Use forward slashes / for paths
+  - Use .sh for shell scripts
