@@ -130,6 +130,21 @@ class WindowsInterpreter(Tools):
         """
         Check if Windows command failed.
         """
+        # First check for explicit success indicators
+        success_patterns = [
+            r"SUCCESS:",
+            r"successfully",
+            r"File created",
+            r"Directory created",
+            r"Operation completed"
+        ]
+        
+        feedback_lower = feedback.lower()
+        for pattern in success_patterns:
+            if re.search(pattern.lower(), feedback_lower):
+                return False  # Not a failure if we see success
+        
+        # Then check for errors
         error_patterns = [
             r"expected",
             r"errno",
