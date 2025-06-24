@@ -19,7 +19,7 @@ class Logger:
         self.logger.setLevel(logging.DEBUG)
         self.logger.handlers.clear()
         self.logger.propagate = False
-        file_handler = logging.FileHandler(self.log_path)
+        file_handler = logging.FileHandler(self.log_path, encoding='utf-8')
         formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
         file_handler.setFormatter(formatter)
         self.logger.addHandler(file_handler)
@@ -39,8 +39,17 @@ class Logger:
         if self.last_log_msg == message:
             return
         if self.enabled:
-            self.last_log_msg = message
-            self.logger.log(level, message)
+            try:
+                self.last_log_msg = message
+                self.logger.log(level, message)
+            except (UnicodeEncodeError, UnicodeDecodeError) as e:
+                # Fallback: try to log with ASCII-only characters
+                try:
+                    safe_message = message.encode('ascii', 'replace').decode('ascii')
+                    self.logger.log(level, f"[ENCODING ERROR] {safe_message}")
+                except Exception:
+                    # If all else fails, just log that there was an error
+                    self.logger.log(level, "[ENCODING ERROR] Unable to log message with Unicode characters")
 
     def info(self, message):
         self.log(message)
