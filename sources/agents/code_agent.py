@@ -7,10 +7,13 @@ from sources.tools.C_Interpreter import CInterpreter
 from sources.tools.GoInterpreter import GoInterpreter
 from sources.tools.PyInterpreter import PyInterpreter
 from sources.tools.BashInterpreter import BashInterpreter
+from sources.tools.WindowsInterpreter import WindowsInterpreter
 from sources.tools.JavaInterpreter import JavaInterpreter
+from sources.tools.JavaScriptInterpreter import JavaScriptInterpreter
 from sources.tools.fileFinder import FileFinder
 from sources.logger import Logger
 from sources.memory import Memory
+from sources.utility import get_os_type, is_running_in_docker
 
 class CoderAgent(Agent):
     """
@@ -18,12 +21,20 @@ class CoderAgent(Agent):
     """
     def __init__(self, name, prompt_path, provider, verbose=False):
         super().__init__(name, prompt_path, provider, verbose, None)
+        
+        # Use WindowsInterpreter on Windows when not in Docker
+        if get_os_type() == 'windows' and not is_running_in_docker():
+            bash_interpreter = WindowsInterpreter()
+        else:
+            bash_interpreter = BashInterpreter()
+            
         self.tools = {
-            "bash": BashInterpreter(),
+            "bash": bash_interpreter,
             "python": PyInterpreter(),
             "c": CInterpreter(),
             "go": GoInterpreter(),
             "java": JavaInterpreter(),
+            "javascript": JavaScriptInterpreter(),
             "file_finder": FileFinder()
         }
         self.work_dir = self.tools["file_finder"].get_work_dir()

@@ -28,6 +28,13 @@ You can execute python using the python tag
 print("hey")
 ```
 
+You can execute JavaScript using the javascript tag (requires Node.js)
+```javascript
+console.log("Hello from JavaScript!");
+const numbers = [1, 2, 3, 4, 5];
+console.log(numbers.map(n => n * 2));
+```
+
 You can execute go using the go tag, as you can see adding :filename will save the file.
 ```go:hello.go
 package main
@@ -53,6 +60,11 @@ with open('index.html', 'w') as f:
     f.write(html_content)
 print("SUCCESS: Created index.html")
 ```
+
+IMPORTANT: When creating HTML files with embedded JavaScript:
+- Include JavaScript directly in the HTML file within <script> tags
+- Use Python to write the complete HTML file including all CSS and JavaScript
+- You can test JavaScript code separately using ```javascript blocks if needed
 
 
 Some rules:
